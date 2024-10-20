@@ -1,65 +1,44 @@
-import {initializeApp, applicationDefault } from 'firebase-admin/app';
-import { getMessaging } from "firebase-admin/messaging";
-import express, { json } from "express";
-import cors from "cors";
+import express from 'express';
+import bodyParser from 'body-parser';
+import admin from 'firebase-admin';
+import { readFile } from 'fs/promises';
 
+// Initialize Firebase Admin SDK
+const serviceAccount = await readFile(new URL('./note-app-a0808-firebase-adminsdk-35brb-43ecbc1d03.json', import.meta.url)); // Adjust path to your service account key
 
-process.env.GOOGLE_APPLICATION_CREDENTIALS = "note-app-a0808-firebase-adminsdk-35brb-b7a47b57f8.json";
+admin.initializeApp({
+    credential: admin.credential.cert(JSON.parse(serviceAccount)),
+});
+
 const app = express();
-app.use(express.json());
+const PORT = process.env.PORT || 3000;
 
-app.use(
-  cors({
-    origin: "*",
-  })
-);
+// Middleware to parse JSON bodies
+app.use(bodyParser.json());
 
-app.use(
-  cors({
-    methods: ["GET", "POST", "DELETE", "UPDATE", "PUT", "PATCH"],
-  })
-);
+// Endpoint to send push notifications
+app.post('/send-notification', (req, res) => {
+    const { token, title, body } = req.body;
 
-app.use(function(req, res, next) {
-  res.setHeader("Content-Type", "application/json");
-  next();
+    const message = {
+        notification: {
+            title: title,
+            body: body,
+        },
+        token: token,
+    };
+
+    admin.messaging().send(message)
+        .then((response) => {
+            console.log('Notification sent successfully:', response);
+            res.status(200).send('Notification sent successfully');
+        })
+        .catch((error) => {
+            console.error('Error sending notification:', error);
+            res.status(500).send('Error sending notification');
+        });
 });
 
-
-initializeApp({
-  credential: applicationDefault(),
-  projectId: 'potion-for-creators',
-});
-
-app.post("/send", function (req, res) {
-  const receivedToken = req.body.fcmToken;
-  
-  const message = {
-    notification: {
-      title: "Notify by sandesh",
-      body: 'This is a Test Notification yay'
-    },
-    token: "c4abQJSQRge_8_beaosT-A:APA91bE7z8M6jkka913nE-qBihueQ5539HvQFIdggrqP3pEXzz6R-9lZAhN34dkCw2heaAL5fSOhIxqUTJADh_9eBFtTyavAGuy47RaCfz2HHf_6SLHgx9BzTBkoZ9kVUiPkmbWZntcI",
-  };
-  
-  getMessaging()
-    .send(message)
-    .then((response) => {
-      res.status(200).json({
-        message: "Successfully sent message",
-        token: receivedToken,
-      });
-      console.log("Successfully sent message:", response);
-    })
-    .catch((error) => {
-      res.status(400);
-      res.send(error);
-      console.log("Error sending message:", error);
-    });
-  
-  
-});
-
-app.listen(3000, function () {
-  console.log("Server started on port 3000");
+app.listen(PORT, () => {
+    console.log(`Server is running on http://localhost:${PORT}`);
 });
