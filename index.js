@@ -4,7 +4,7 @@ import admin from 'firebase-admin';
 import { readFile } from 'fs/promises';
 
 // Initialize Firebase Admin SDK
-const serviceAccount = await readFile(new URL('./note-app-a0808-firebase-adminsdk-35brb-43ecbc1d03.json', import.meta.url)); // Adjust path to your service account key
+const serviceAccount = await readFile(new URL('./note-app-a0808-firebase-adminsdk-35brb-72574ffa33.json', import.meta.url)); // Adjust path to your service account key
 
 admin.initializeApp({
     credential: admin.credential.cert(JSON.parse(serviceAccount)),
