@@ -37,10 +37,10 @@ app.post("/send", function (req, res) {
   
   const message = {
     notification: {
-      title: "Notif",
-      body: 'This is a Test Notification'
+      title: "Notify by sandesh",
+      body: 'This is a Test Notification yay'
     },
-    token: "YOUR FCM TOKEN HERE",
+    token: "c4abQJSQRge_8_beaosT-A:APA91bE7z8M6jkka913nE-qBihueQ5539HvQFIdggrqP3pEXzz6R-9lZAhN34dkCw2heaAL5fSOhIxqUTJADh_9eBFtTyavAGuy47RaCfz2HHf_6SLHgx9BzTBkoZ9kVUiPkmbWZntcI",
   };
   
   getMessaging()
