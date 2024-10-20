@@ -4,8 +4,7 @@ import express, { json } from "express";
 import cors from "cors";
 
 
-process.env.GOOGLE_APPLICATION_CREDENTIALS;
-
+process.env.GOOGLE_APPLICATION_CREDENTIALS = "note-app-a0808-firebase-adminsdk-35brb-b7a47b57f8.json";
 const app = express();
 app.use(express.json());
 
